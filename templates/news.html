@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+
+{% block div %}
+<div style = "margin-top : 100px; margin-bottom:80px;" class = "container">
+{% endblock div %}
+
+{% block body %}
+
+<div class ="row">
+    
+        <div class="col-md-10 offset-md-3">
+            <div class="col-lg-8">
+                <h3>News</h3>
+                <hr>
+                </div>
+        </div>
+</div>
+
+
+{% if news %}
+
+{% for news in news %}
+{{ news.full_name|upper }}
+<br>
+
+<div class="caption">
+    <div class="col-md-10 offset-md-3">
+
+    <!-- Post Content Column -->
+    <div class="col-lg-8">
+
+      <!-- Title -->
+      <a href="{% url 'news:newsDetail' news.id %}"><h2 class="mt-4">{{news.title}}</h2></a> 
+        
+      <!-- Author -->
+      <p class="lead">
+        
+        created by {{news.author.username}} 
+      </p>
+
+      <hr>
+
+      <!-- Date/Time -->
+      <p>{{news.created_date|timesince}}&nbsp;ago</p>
+      <hr>
+      <!-- Preview Image -->
+      {% if news.news_image %}
+      <a href="{% url 'news:newsDetail' news.id %}"><img class="img-fluid rounded" src="{{news.news_image.url}}" alt=""></a>
+      {% endif %}
+     
+
+      <hr>
+
+      <!-- Post Content -->
+      <p class="lead">
+          {{news.content|safe|truncatechars:190 }}
+      </p>
+
+      <a style ="float : right;" href="{% url 'news:newsDetail' news.id %}" class ="btn btn-primary">view</a>
+      <hr>
+         
+        </div>
+      </div>
+      </div>
+
+{% endfor %}
+<br>
+<br>
+
+
+
+<div class ="row">
+  <div class="col-md-10 offset-md-3">
+    <div class="col-lg-8">
+
+    <hr>
+<div class="pagination">
+<span class="step-links">
+    {% if news.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ news.previous_page_number }}{% if request.GET.query %} &query={{ request.GET.query }}{% endif %}">previous</a>
+    {% endif %}
+
+    <span class="current">
+        Page {{ news.number }} of {{ news.paginator.num_pages }}.
+    </span>
+
+    {% if news.has_next %}
+        <a href="?page={{ news.next_page_number }}">next</a>
+        <a href="?page={{ news.paginator.num_pages }}{% if request.GET.query %} &query={{ request.GET.query }}{% endif %}">last &raquo;</a>
+    {% endif %}
+</span>
+</div>
+</div>
+</div>
+</div>
+{% else %}
+<div class ="row">
+    
+    <div class="col-md-10 offset-md-3">
+        <div class="col-lg-8">
+<div class = "alert alert-danger">
+  There are no comments in news!
+</div>
+</div>
+</div>
+</div>
+{% endif %}
+
+{% endblock body %}
+</div>

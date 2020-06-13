@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+{% load log %}
+{% block body %}
+<div class="row">
+
+    <!-- Post Content Column -->
+    <div class="col-lg-8">
+
+      <!-- Title -->
+      <h3 class="mt-4">{{article.title}}</h3>
+
+      <!-- Author -->
+      <p class="lead">
+        
+        created by {{article.author.username}} 
+      </p>
+
+      <hr>
+
+      <!-- Date/Time -->
+      <p>{{article.created_date}}</p>
+
+      <hr>
+      
+      <!-- Preview Image -->
+      {% if article.article_image %}
+      <img class="img-fluid rounded" src="{{article.article_image.url}}" alt="">
+      {% endif %}
+     
+
+      <hr>
+
+      <!-- Post Content -->
+      <p class="lead">
+          {{article.content|safe}}
+      </p>
+      
+      {% if request.user.is_authenticated %}
+      <div style="float:right;" class="btn-group-toggle" data-toggle="buttons">
+        {% if request.user.is_superuser and request.user.is_authenticated %}
+          <a href="{% url 'article:delete' article.id %}" class = "btn btn-danger">delete</a>
+        {% elif article.author.id == request.user.id and request.user.is_authenticated%}
+          <a href="{% url 'article:update' article.id %}" class = "btn btn-primary">update</a>
+          <a href="{% url 'article:delete' article.id %}" class = "btn btn-danger">delete</a>
+        
+
+        {% endif %}
+
+      <hr>  
+      </div>
+      {% endif %}
+      
+      <br>
+      <br>
+      
+      
+
+      <h4>Comments</h4>
+      <hr>
+      {% if comments %}
+      {% for comment in comments  %}
+        <div class="media mb-4">
+          <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+          <div class="media-body">
+          <h5 class="mt-0">{{comment.comment_author}}</h5>
+            <p>{{comment.comment_date|timesince}}&nbsp;ago</p> <br>
+            <p>{{comment.comment_content}}</p>
+            <hr>
+            {% if comment.comment_author == request.user.username or request.user.is_superuser and request.user.is_authenticated %}
+            <td ><a style="float:right;" href="{% url 'article:delete_comment' comment.id %}" class = "btn btn-danger">delete</a> </td>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+      
+      
+      {% else %}
+      <div class ="alert alert-danger">
+        
+        There are no comments to this article, be the first to comment!
+
+      </div>
+      {% endif %}
+
+      <div class="card my-4">
+          <h5 class="card-header">Write comment:</h5>
+          <div class="card-body">
+            <form method = "post" action = "{% url 'article:comment' article.id %}">
+              {% csrf_token %}
+              <!--<div class="form-group">
+                  <label for="formGroupExampleInput">Name</label>
+                  <input name = "comment_author" type="text" class="form-control" id="formGroupExampleInput" >
+                </div>>-->
+              <div class="form-group">
+                  <label for="formGroupExampleInput">Content</label>
+                <textarea name = "comment_content" class="form-control" rows="3"></textarea>
+              </div>
+              <button type="submit" class="btn btn-success">Add</button>
+            </form>
+          </div>
+        </div>
+        </div>
+        
+      </div>
+
+      
+
+{% endblock body %}

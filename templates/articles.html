@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block div %}
+<div style = "margin-top : 100px; margin-bottom:80px;" class = "container">
+{% endblock div %}
+
+{% block body %}
+
+<div class ="row">
+    
+        <div class="col-md-10 offset-md-3">
+            <div class="col-lg-8">
+                <h3>Articles</h3>
+                <hr>
+                </div>
+        </div>
+</div>
+<div class ="caption">
+    <div class="col-md-10 offset-md-3">
+        <div class="col-lg-8">
+            <form>
+                 {% csrf_token %} 
+                <input type="text" name = "keyword" class="input-sm" maxlength="64" placeholder="Search..." value="{{request.GET.keyword}}">
+              <button type="submit" class="btn btn-danger">Search</button>
+            </form>
+      </div>
+    </div>
+
+</div>
+
+
+{% if articles %}
+
+{% for article in articles %}
+{{ article.full_name|upper }}
+<br>
+
+<div class="caption">
+    <div class="col-md-10 offset-md-3">
+
+    <!-- Post Content Column -->
+    <div class="col-lg-8">
+
+      <!-- Title -->
+      <a href="{% url 'article:detail' article.id %}"><h2 class="mt-4">{{article.title}}</h2></a> 
+        
+      <!-- Author -->
+      <p class="lead">
+        
+        created by {{article.author.username}} 
+      </p>
+
+      <hr>
+
+      <!-- Date/Time -->
+      <p>{{article.created_date|timesince}}&nbsp;ago</p>
+      <hr>
+      <!-- Preview Image -->
+      {% if article.article_image %}
+      <a href="{% url 'article:detail' article.id %}"><img class="img-fluid rounded" src="{{article.article_image.url}}" alt=""></a>
+      {% endif %}
+     
+
+      <hr>
+
+      <!-- Post Content -->
+      <p class="lead">
+          {{article.content|safe|truncatechars:190 }}
+      </p>
+
+      <a style ="float : right;" href="{% url 'article:detail' article.id %}" class ="btn btn-primary">view</a>
+      <hr>
+         
+        </div>
+      </div>
+      </div>
+
+{% endfor %}
+<br>
+<br>
+
+
+
+<div class ="row">
+  <div class="col-md-10 offset-md-3">
+    <div class="col-lg-8">
+
+    <hr>
+    
+<div aria-label="pagination">
+<ul class="pagination">
+  
+    {% if articles.has_previous %}
+       <li class="page-item"> <a class="page-link" href="?page=1">&laquo; first</a></li>
+       <li class="page-item"> <a class="page-link" href="?page={{ articles.previous_page_number }}{% if request.GET.keyword %} &keyword={{ request.GET.keyword }}{% endif %}">previous</a></li>
+    {% endif %}
+    <li class="page-item disabled">
+      <span class="page-link">Page {{ articles.number }} of {{ articles.paginator.num_pages }}</span>
+    </li>
+    
+    {% if articles.has_next %}
+        <a class="page-link" href="?page={{ articles.next_page_number }}">next</a>
+        <a class="page-link" href="?page={{ articles.paginator.num_pages }}{% if request.GET.keyword %} &keyword={{ request.GET.keyword }}{% endif %}">last &raquo;</a>
+    {% endif %}
+  </ul>
+</div>
+</div>
+</div>
+</div>
+{% else %}
+<div class ="row">
+    
+    <div class="col-md-10 offset-md-3">
+        <div class="col-lg-8">
+<div class = "alert alert-danger">
+  There are no comments to this article, create the first to comment!
+</div>
+</div>
+</div>
+</div>
+{% endif %}
+
+{% endblock body %}
+</div>

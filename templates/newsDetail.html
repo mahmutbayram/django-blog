@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="row">
+
+    <!-- Post Content Column -->
+    <div class="col-lg-8">
+
+      <!-- Title -->
+      <h3 class="mt-4">{{news.title}}</h3>
+
+      <!-- Author -->
+      
+
+      <hr>
+
+      <!-- Date/Time -->
+      <p>{{news.created_date}}</p>
+
+      <hr>
+      
+      <!-- Preview Image -->
+      {% if news.news_image %}
+      <img class="img-fluid rounded" src="{{news.news_image.url}}" alt="">
+      {% endif %}
+     
+
+      <hr>
+
+      <!-- Post Content -->
+      <p class="lead">
+          {{news.content|safe}}
+      </p>
+      
+      {% if request.user.is_authenticated %}
+      <tr class="ml-auto">
+        <td ><a style="float:right;" href="{% url 'news:updatenews' news.id %}" class = "btn btn-primary">update</a></td>
+        <p></p>
+        <td ><a style="float:right;" href="{% url 'news:deletenews' news.id %}" class = "btn btn-danger">delete</a> </td>
+      </tr>
+      <hr>
+      {% endif %}
+
+{% endblock body %}
